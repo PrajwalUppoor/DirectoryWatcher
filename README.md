@@ -41,7 +41,8 @@ go run .\main.go
 Applications starts running at port number 8080 you can change this in main.go.
 
 Use Postman Collection for testing this Api 
-For Reference of Database Schema open DirectoryWatcherERDiagram.png in root of the repo 
+
+Referer the Database Schema in root of the repo DirectoryWatcherERDiagram.png   
 
 This Application uses Gin Framework along with GORM
 
