@@ -5,7 +5,6 @@ import (
 	"dirwatcher/models"
 	"dirwatcher/services"
 	"dirwatcher/structures"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -19,7 +18,7 @@ import (
 
 		This method will Create new Configurations
 		@Accept json
-	    @Produce json
+	        @Produce json
 		@Success 200
 		@Router /configurations/:id [POST]
 */
@@ -27,7 +26,7 @@ func CreateConfiguration(c *gin.Context) {
 	// Parse request body and create a new Configuration
 	configsDto := structures.Configuration{}
 	if err := c.BindJSON(&configsDto); err != nil {
-		log.Printf("Error while binding the json :%v", err)
+		log.Printf("[CreateConfiguration] Error while binding the json :%v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Error while creating configuration"})
 		return
 	}
@@ -49,7 +48,7 @@ func CreateConfiguration(c *gin.Context) {
 *
 
 		This method will fetch all the Configurations
-	    @Produce json
+	        @Produce json
 		@Success 200
 		@Router /configurations [GET]
 */
@@ -71,7 +70,7 @@ func GetAllConfigurations(c *gin.Context) {
 
 		This method will Fetch Configurations by passing Id as Path Parameter
 		@PathParam id
-	    @Produce json
+	        @Produce json
 		@Success 200
 		@Router /configurations/:id [GET]
 */
@@ -80,10 +79,11 @@ func GetConfigurationByID(c *gin.Context) {
 	var config models.Configurations
 	id := c.Params.ByName("id")
 	if err := db.DB.Where("id = ?", id).First(&config).Error; err != nil {
-		log.Fatalf("Error while getting configs %v", err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"message": fmt.Sprintf("Error while fetching configuration for Id: %v", id)})
+		log.Printf("[GetConfigurationByID] Error while getting configs by Id %v", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": fmt.Sprintf("configuration for Id: %v not found", id)})
 		return
 	}
+
 	// Return it as JSON
 	c.JSON(http.StatusOK, gin.H{"configuration": structures.Configuration{MonitoredDirectory: config.MonitoredDirectory, TimeInterval: config.TimeInterval, MagicString: config.MagicString}})
 }
@@ -93,7 +93,7 @@ func GetConfigurationByID(c *gin.Context) {
 
 		This method will Update Configurations by passing ConfigurationId along with Configuration Details in Request Body.
 		@Accept json
-	    @Produce json
+	        @Produce json
 		@Success 200
 		@Router /configurations/ [PUT]
 */
@@ -102,7 +102,7 @@ func UpdateConfiguration(c *gin.Context) {
 	configsDto := structures.ConfigurationResponse{}
 	if err := c.BindJSON(&configsDto); err != nil {
 		log.Printf("[UpdateConfiguration] Error while binding the json :%v", err)
-		c.AbortWithError(http.StatusBadRequest, errors.New("Error while binding the configuration %v"))
+		c.JSON(http.StatusBadRequest, gin.H{"message": fmt.Sprintf("Update Configurations failed :%v", err)})
 		return
 	}
 
@@ -123,7 +123,7 @@ func UpdateConfiguration(c *gin.Context) {
 
 		This method will Delete Configurations by passing Id as Path Parameter
 		@PathParam id
-	    @Produce json
+	        @Produce json
 		@Success 200
 		@Router /configurations/:id [DELETE]
 */
