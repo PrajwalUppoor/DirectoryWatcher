@@ -3,7 +3,7 @@ This is Go based application which can be used to watch multiple directories con
 Link to the POST man collection for this API is https://www.postman.com/altimetry-engineer-7579503/workspace/watcherfordirectoryusinggo/collection/14080278-82b34288-9dd3-4667-a9f8-5d3663b2b826?action=share&creator=14080278
 has the list of APIs with the route, method and sample request body along with sample responses are available in the documentation section. You can also use the curl command to hit the api.
 
-## Prereqisites
+## Prerequisites
 Install Docker Desktop 
 
 For Windows https://docs.docker.com/desktop/install/windows-install/
