@@ -18,12 +18,23 @@ var (
 
 )
 
+/*
+*
+
+		This method will Start Task for given ConfigurationId
+		@Accept json
+	        @Produce json
+		@Success 200
+		@Router /task/start [POST]
+*/
 func StartDirectoryWatchTask(c *gin.Context) {
 
 	stopChan := make(chan struct{})
 	configsDto := structures.TaskDto{}
 	if err := c.BindJSON(&configsDto); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": fmt.Sprintf("Bad Request : %v", configsDto),
+		})
 		return
 	}
 	configModel := models.Configurations{}
@@ -46,6 +57,15 @@ func StartDirectoryWatchTask(c *gin.Context) {
 	})
 }
 
+/*
+*
+
+		This method will Stop Task for given ConfigurationId
+		@Accept json
+	        @Produce json
+		@Success 200
+		@Router /task/stop [POST]
+*/
 func StopDirectoryWatchTask(c *gin.Context) {
 
 	configsDto := structures.TaskDto{}
@@ -78,6 +98,15 @@ func StopDirectoryWatchTask(c *gin.Context) {
 	}
 }
 
+/*
+*
+
+		This method will fetch all task details
+		@Accept json
+	        @Produce json
+		@Success 200
+		@Router /task/details [POST]
+*/
 func GetTaskDetails(c *gin.Context) {
 
 	taskModels := []models.Task{}
