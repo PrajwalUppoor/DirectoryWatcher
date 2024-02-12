@@ -23,7 +23,7 @@ func main() {
 	// Stops a task with the given configurationId
 	r.POST("/task/stop", endpoints.StopDirectoryWatchTask)
 	// Get all task details
-	r.GET("/task-details", endpoints.GetTaskDetails)
+	r.GET("/task/details", endpoints.GetTaskDetails)
 
 	// Create a new configuration
 	r.POST("/configurations", endpoints.CreateConfiguration)
