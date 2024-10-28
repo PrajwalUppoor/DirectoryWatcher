@@ -29,7 +29,7 @@ func Connect() error {
 		return err
 	}
 
-	db.AutoMigrate(&models.Configurations{}, &models.Task{})
+	db.AutoMigrate(&models.Configurations{}, &models.Task{}, &models.UserProfile{}, &models.Preferences{}, &models.Itinerary{}, &models.BookingHistory{})
 	DB = db
 	return nil
 }

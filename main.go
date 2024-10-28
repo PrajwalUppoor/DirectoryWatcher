@@ -11,10 +11,50 @@ import (
 	"syscall"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/time/rate"
 )
+
+func RateLimiter(r rate.Limit, b int) gin.HandlerFunc {
+	limiter := rate.NewLimiter(r, b)
+
+	return func(c *gin.Context) {
+		if !limiter.Allow() {
+			c.JSON(http.StatusTooManyRequests, gin.H{"error": "Too many requests"})
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
+}
+
+// func AuthMiddleware() gin.HandlerFunc {
+// 	return func(c *gin.Context) {
+// 		// Get the Authorization header
+// 		authHeader := c.GetHeader("Authorization")
+// 		if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
+// 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is missing or invalid"})
+// 			c.Abort()
+// 			return
+// 		}
+
+// 		// Extract the token
+// 		token := strings.TrimPrefix(authHeader, "Bearer ")
+
+// 		// Here, you can add logic to validate the token
+// 		if token != "your_secret_token" { // Replace with your token validation logic
+// 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+// 			c.Abort()
+// 			return
+// 		}
+
+// 		c.Next()
+// 	}
+// }
 
 func main() {
 	r := gin.Default()
+	r.Use(RateLimiter(1, 3))
+	// r.Use(AuthMiddleware())
 
 	// API endpoints
 	// task endpoints
@@ -35,6 +75,25 @@ func main() {
 	r.PUT("/configurations", endpoints.UpdateConfiguration)
 	// Delete a configuration by ID
 	r.DELETE("/configurations/:id", endpoints.DeleteConfiguration)
+
+	// User profile routes
+	r.POST("/profiles", endpoints.CreateProfile)
+	r.GET("/profiles/:id", endpoints.GetProfile)
+	r.PUT("/profiles/:id", endpoints.UpdateProfile)
+
+	// Itinerary routes
+	r.POST("/itineraries", endpoints.CreateItinerary)
+	r.GET("/itineraries", endpoints.GetItineraries)
+	r.GET("/itineraries/:id", endpoints.GetItinerary)
+	r.PUT("/itineraries/:id", endpoints.UpdateItinerary)
+	r.DELETE("/itineraries/:id", endpoints.DeleteItinerary)
+
+	// Booking history routes
+	r.POST("/booking-history", endpoints.CreateBookingHistory)
+	r.GET("/booking-history/:id", endpoints.GetBookingHistory)
+
+	// WebSocket route
+	r.GET("/ws/chat", endpoints.WebSocketHandler)
 
 	srv := &http.Server{
 		Addr:    ":8080",
